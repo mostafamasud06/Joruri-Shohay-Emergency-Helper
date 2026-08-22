@@ -5,6 +5,8 @@ people in Bangladesh make fast, correct decisions in a medical emergency —
 which real number to call, what to do while help arrives, and which nearby
 hospital fits their budget.
 
+**Built with:** Strands Agents SDK, Amazon Bedrock, Claude, Python, Flask, AWS.
+
 **Problem:** In a medical emergency, minutes matter — but many people don't
 know the right number to call, what basic first aid to do while waiting, or
 which hospital they can actually afford and reach in time. This gets far
@@ -61,7 +63,6 @@ python app.py                   # runs the actual web product (recommended)
 `python app.py` starts a local web server — open **http://127.0.0.1:5000** in your browser to use it. This is the real submission entry point; `main.py` is kept only as a lightweight terminal version for quick testing.
 
 Try asking:
-
 - "আমার বাবার হঠাৎ বুকে ব্যথা হচ্ছে, আমি ধানমন্ডিতে আছি" (my father has sudden chest pain, I'm in Dhanmondi)
 - "There's been a road accident, someone is bleeding badly, what do I do?"
 - "ভূমিকম্প হচ্ছে, কী করব?" (there's an earthquake happening, what do I do?)
@@ -71,14 +72,24 @@ Try asking:
 
 ## File structure
 
-| File                 | What it does                                                                                                                            |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `knowledge_base.py`  | Emergency numbers, hospital database, blood banks, first-aid steps. **Edit this to add cities/hospitals.**                              |
-| `tools.py`           | Six tools: `geocode_location`, `find_hospitals`, `find_blood_banks`, `get_emergency_number`, `first_aid_steps`, `submit_user_feedback`. |
-| `main.py`            | Terminal/CLI version of the agent — useful for quick testing.                                                                           |
-| `app.py`             | **The real product** — a Flask web server exposing the agent through `static/index.html`.                                               |
-| `static/index.html`  | The actual frontend: chat UI with dark/light theme and Bangla/English language toggles.                                                 |
-| `feedback_log.jsonl` | Auto-created once users submit corrections/suggestions — review and merge into `knowledge_base.py` manually. Not committed to git.      |
+| File | What it does |
+|---|---|
+| `knowledge_base.py` | Emergency numbers, hospital database, blood banks, first-aid steps. **Edit this to add cities/hospitals.** |
+| `tools.py` | Six tools: `geocode_location`, `find_hospitals`, `find_blood_banks`, `get_emergency_number`, `first_aid_steps`, `submit_user_feedback`. |
+| `main.py` | Terminal/CLI version of the agent — useful for quick testing. |
+| `app.py` | **The real product** — a Flask web server exposing the agent through `static/index.html`. |
+| `static/index.html` | The actual frontend: chat UI with dark/light theme and Bangla/English language toggles. |
+| `requirements.txt` | Python dependencies — install with `pip install -r requirements.txt`. |
+| `architecture.svg` | System architecture diagram (also shown below). |
+| `LICENSE` | MIT license (open source, required by the hackathon rules). |
+| `.gitignore` | Excludes the virtual environment, cache files, and any local secrets/user data from version control. |
+| `feedback_log.jsonl` | Auto-created once users submit corrections/suggestions — review and merge into `knowledge_base.py` manually. Not committed to git. |
+
+---
+
+## Architecture
+
+![Joruri Shohay system architecture diagram](architecture.svg)
 
 ---
 
