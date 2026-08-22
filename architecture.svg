@@ -1,0 +1,53 @@
+<svg viewBox="0 0 950 460" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#444"/>
+    </marker>
+  </defs>
+
+  <rect x="20" y="190" width="150" height="90" rx="10" fill="#FFF3CD" stroke="#B8860B" stroke-width="2"/>
+  <text x="95" y="225" text-anchor="middle" font-size="14" font-weight="bold">User</text>
+  <text x="95" y="243" text-anchor="middle" font-size="11">location, situation,</text>
+  <text x="95" y="258" text-anchor="middle" font-size="11">budget</text>
+
+  <rect x="220" y="190" width="160" height="90" rx="10" fill="#D6EAF8" stroke="#2874A6" stroke-width="2"/>
+  <text x="300" y="220" text-anchor="middle" font-size="13" font-weight="bold">Chat Interface</text>
+  <text x="300" y="240" text-anchor="middle" font-size="11">CLI (now) /</text>
+  <text x="300" y="256" text-anchor="middle" font-size="11">WhatsApp (future)</text>
+
+  <rect x="430" y="160" width="220" height="150" rx="10" fill="#D5F5E3" stroke="#1E8449" stroke-width="2"/>
+  <text x="540" y="190" text-anchor="middle" font-size="14" font-weight="bold">Joruri Shohay Agent</text>
+  <text x="540" y="212" text-anchor="middle" font-size="11">Safety-first system prompt:</text>
+  <text x="540" y="228" text-anchor="middle" font-size="11">999 number FIRST if serious</text>
+  <text x="540" y="244" text-anchor="middle" font-size="11">then first-aid, then hospitals</text>
+  <text x="540" y="264" text-anchor="middle" font-size="11">Claude via Amazon Bedrock</text>
+  <text x="540" y="284" text-anchor="middle" font-size="11">(Strands Agent + BedrockModel)</text>
+
+  <rect x="700" y="40" width="220" height="70" rx="10" fill="#FADBD8" stroke="#943126" stroke-width="2"/>
+  <text x="810" y="68" text-anchor="middle" font-size="13" font-weight="bold">get_emergency_number()</text>
+  <text x="810" y="86" text-anchor="middle" font-size="11">Verified 999 / 1090 / 109</text>
+  <text x="810" y="100" text-anchor="middle" font-size="10">(knowledge_base.py)</text>
+
+  <rect x="700" y="130" width="220" height="70" rx="10" fill="#FADBD8" stroke="#943126" stroke-width="2"/>
+  <text x="810" y="158" text-anchor="middle" font-size="13" font-weight="bold">find_hospitals()</text>
+  <text x="810" y="176" text-anchor="middle" font-size="11">Distance-ranked, tier-filtered</text>
+  <text x="810" y="190" text-anchor="middle" font-size="10">(haversine + hospital DB)</text>
+
+  <rect x="700" y="220" width="220" height="70" rx="10" fill="#FADBD8" stroke="#943126" stroke-width="2"/>
+  <text x="810" y="248" text-anchor="middle" font-size="13" font-weight="bold">first_aid_steps()</text>
+  <text x="810" y="266" text-anchor="middle" font-size="11">Standard, vetted guidance only</text>
+  <text x="810" y="280" text-anchor="middle" font-size="10">(never diagnosis)</text>
+
+  <rect x="700" y="320" width="220" height="70" rx="10" fill="#E8DAEF" stroke="#6C3483" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="810" y="348" text-anchor="middle" font-size="13" font-weight="bold">Future: AgentCore</text>
+  <text x="810" y="366" text-anchor="middle" font-size="11">Always-on hosted deployment</text>
+
+  <line x1="170" y1="235" x2="215" y2="235" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="380" y1="235" x2="425" y2="235" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="650" y1="200" x2="695" y2="90" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="650" y1="220" x2="695" y2="165" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="650" y1="250" x2="695" y2="255" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="650" y1="280" x2="695" y2="345" stroke="#444" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+
+  <text x="480" y="420" text-anchor="middle" font-size="12" fill="#555">Joruri Shohay — emergency number always comes first, hospital/first-aid info is supportive, never a replacement for 999</text>
+</svg>
