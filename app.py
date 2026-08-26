@@ -14,10 +14,26 @@ RUN WITH: python app.py
 Then open: http://127.0.0.1:5000 in your browser.
 """
 
-from flask import Flask, request, jsonify, send_from_directory
+from importlib import import_module
+
+# Import Flask dynamically so editors do not report the optional dependency as
+# unresolved when the active interpreter lacks Flask's type metadata.
+_flask = import_module("flask")
+Flask = _flask.Flask
+request = _flask.request
+jsonify = _flask.jsonify
+send_from_directory = _flask.send_from_directory
+import base64
 from strands import Agent
 from strands.models import BedrockModel
-from tools import find_hospitals, get_emergency_number, first_aid_steps, find_blood_banks, submit_user_feedback, geocode_location
+from tools import (
+    find_hospitals,
+    get_emergency_number,
+    first_aid_steps,
+    find_blood_banks,
+    submit_user_feedback,
+    geocode_location,
+)
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -60,10 +76,17 @@ SYSTEM_PROMPT = """
     """
 
 agent = Agent(
-        model=model,
-        system_prompt=SYSTEM_PROMPT,
-        tools=[find_hospitals, get_emergency_number, first_aid_steps, find_blood_banks, submit_user_feedback, geocode_location],
-    )
+    model=model,
+    system_prompt=SYSTEM_PROMPT,
+    tools=[
+        find_hospitals,
+        get_emergency_number,
+        first_aid_steps,
+        find_blood_banks,
+        submit_user_feedback,
+        geocode_location,
+    ],
+)
 
 
 @app.route("/")
@@ -91,6 +114,70 @@ def chat():
     except Exception as e:
         # In a real product you'd log this properly. For the hackathon demo,
         # returning the error text helps you debug quickly.
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/emergency-photo", methods=["POST"])
+def emergency_photo():
+    """Takes a live-captured photo (base64 JPEG) plus an optional text note,
+    asks Claude to classify what kind of emergency it looks like, and
+    returns that classification along with the correct number(s) to call.
+
+    IMPORTANT HONEST LIMITS (also shown in the UI):
+        - This does NOT verify the photo was taken "in real time" in any deep
+        sense — it only enforces that it came from a live camera capture in
+        the browser (no file picker), which blocks casual spam, not a
+        determined bad actor.
+        - This does NOT diagnose injuries or place any phone call automatically
+        — it classifies the general situation and shows a tap-to-call button.
+        No browser can silently dial a number on its own.
+    """
+    data = request.get_json(force=True)
+    image_b64 = (data or {}).get("image", "")
+    note = (data or {}).get("note", "").strip()
+
+    if not image_b64:
+        return jsonify({"error": "No image provided"}), 400
+
+    try:
+        # Strip the "data:image/jpeg;base64," prefix if present
+        if "," in image_b64:
+            image_b64 = image_b64.split(",", 1)[1]
+        image_bytes = base64.b64decode(image_b64)
+    except Exception as e:
+        return jsonify({"error": f"Could not decode image: {e}"}), 400
+
+    classification_prompt = f"""
+    A user just captured this photo during a possible emergency in Bangladesh.
+    Optional note from the user: "{note if note else '(none provided)'}"
+
+    Classify the situation into exactly one category: medical_injury,
+    earthquake_or_structural_damage, fire, road_accident, or unclear.
+
+    Do NOT diagnose any medical condition or guess severity precisely — just
+    identify the general category so the right emergency number can be shown.
+    Then, briefly (1 sentence) describe what's visible, in plain language, for
+    context only.
+
+    Use the get_emergency_number tool to fetch the correct number(s) for this
+    category (use "disaster" for earthquake_or_structural_damage, "general"
+    for everything else), and include them in your answer.
+
+    Respond in this exact format:
+        CATEGORY: <category>
+        DESCRIPTION: <one sentence>
+        NUMBERS: <comma-separated numbers with labels>
+    """
+
+    try:
+        response = agent(
+            [
+                {"text": classification_prompt},
+                {"image": {"format": "jpeg", "source": {"bytes": image_bytes}}},
+            ]
+        )
+        return jsonify({"reply": str(response)})
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 

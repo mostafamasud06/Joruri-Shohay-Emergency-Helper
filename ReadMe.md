@@ -63,27 +63,41 @@ python app.py                   # runs the actual web product (recommended)
 `python app.py` starts a local web server — open **http://127.0.0.1:5000** in your browser to use it. This is the real submission entry point; `main.py` is kept only as a lightweight terminal version for quick testing.
 
 Try asking:
+
 - "আমার বাবার হঠাৎ বুকে ব্যথা হচ্ছে, আমি ধানমন্ডিতে আছি" (my father has sudden chest pain, I'm in Dhanmondi)
 - "There's been a road accident, someone is bleeding badly, what do I do?"
 - "ভূমিকম্প হচ্ছে, কী করব?" (there's an earthquake happening, what do I do?)
 - "I need O-negative blood urgently, I'm near Dhanmondi"
 
+(These same four scenarios are also available as one-tap example chips above the chat input, in whichever language is currently selected.)
+
+---
+
+## Frontend features
+
+- **Bilingual chat UI** — full Bangla/English toggle, saved between visits.
+- **Example prompt chips** — tap one of the pre-written scenarios above the input to try the agent instantly, no typing required. Hidden after the first message so they don't clutter an active conversation.
+- **Tap-to-call numbers** — any 999/1090/109 or `+880-X-XXXXXXXX`-style hospital/blood-bank number the agent mentions in a reply is automatically rendered as a tappable `tel:` link.
+- **Share my location** — a button next to the input uses the browser's geolocation API to insert real coordinates into the message, so the agent can skip `geocode_location` and call `find_hospitals`/`find_blood_banks` directly. Never sends automatically — it only pre-fills the text box.
+- **Dark/light theme toggle**, saved between visits.
+- Accessible focus states and aria-labels on all icon-only buttons.
+
 ---
 
 ## File structure
 
-| File | What it does |
-|---|---|
-| `knowledge_base.py` | Emergency numbers, hospital database, blood banks, first-aid steps. **Edit this to add cities/hospitals.** |
-| `tools.py` | Six tools: `geocode_location`, `find_hospitals`, `find_blood_banks`, `get_emergency_number`, `first_aid_steps`, `submit_user_feedback`. |
-| `main.py` | Terminal/CLI version of the agent — useful for quick testing. |
-| `app.py` | **The real product** — a Flask web server exposing the agent through `static/index.html`. |
-| `static/index.html` | The actual frontend: chat UI with dark/light theme and Bangla/English language toggles. |
-| `requirements.txt` | Python dependencies — install with `pip install -r requirements.txt`. |
-| `architecture.svg` | System architecture diagram (also shown below). |
-| `LICENSE` | MIT license (open source, required by the hackathon rules). |
-| `.gitignore` | Excludes the virtual environment, cache files, and any local secrets/user data from version control. |
-| `feedback_log.jsonl` | Auto-created once users submit corrections/suggestions — review and merge into `knowledge_base.py` manually. Not committed to git. |
+| File                 | What it does                                                                                                                            |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `knowledge_base.py`  | Emergency numbers, hospital database, blood banks, first-aid steps. **Edit this to add cities/hospitals.**                              |
+| `tools.py`           | Six tools: `geocode_location`, `find_hospitals`, `find_blood_banks`, `get_emergency_number`, `first_aid_steps`, `submit_user_feedback`. |
+| `main.py`            | Terminal/CLI version of the agent — useful for quick testing.                                                                           |
+| `app.py`             | **The real product** — a Flask web server exposing the agent through `static/index.html`.                                               |
+| `static/index.html`  | The actual frontend: chat UI with dark/light theme and Bangla/English language toggles.                                                 |
+| `requirements.txt`   | Python dependencies — install with `pip install -r requirements.txt`.                                                                   |
+| `architecture.svg`   | System architecture diagram (also shown below).                                                                                         |
+| `LICENSE`            | MIT license (open source, required by the hackathon rules).                                                                             |
+| `.gitignore`         | Excludes the virtual environment, cache files, and any local secrets/user data from version control.                                    |
+| `feedback_log.jsonl` | Auto-created once users submit corrections/suggestions — review and merge into `knowledge_base.py` manually. Not committed to git.      |
 
 ---
 
@@ -106,6 +120,7 @@ The agent replies in whichever language the user writes in (Bangla or English) �
 - [ ] Confirm 999 / 1090 / 109 are still correct (they should be stable, but verify)
 - [ ] Test with a few real people describing real (past, resolved) emergencies and see if the response feels genuinely useful
 - [ ] Make sure the agent NEVER skips telling the user to call 999 first in a serious scenario — test this explicitly with a few different phrasings
+- [ ] If `app.py` keeps its own copy of the system prompt instead of importing it from `main.py`, make sure it's updated too — it needs the same instruction about skipping `geocode_location` when the message already contains raw coordinates (from the frontend's "share my location" button)
 
 ---
 

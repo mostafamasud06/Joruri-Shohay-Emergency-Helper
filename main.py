@@ -6,11 +6,18 @@ Run with: python main.py
 Before running:
     export AWS_PROFILE=bedrock
     export AWS_REGION=us-east-1   (match your enabled Bedrock region)
-    """
+"""
 
 from strands import Agent
 from strands.models import BedrockModel
-from tools import find_hospitals, get_emergency_number, first_aid_steps, find_blood_banks, submit_user_feedback, geocode_location
+from tools import (
+    find_hospitals,
+    get_emergency_number,
+    first_aid_steps,
+    find_blood_banks,
+    submit_user_feedback,
+    geocode_location,
+)
 
 model = BedrockModel(
     model_id="global.anthropic.claude-sonnet-4-6",  # Strands' current default Claude model on Bedrock
@@ -37,8 +44,12 @@ SYSTEM_PROMPT = """
     নিকটবর্তী উপযুক্ত হাসপাতাল দেখাও। ব্যবহারকারী যদি এলাকার নাম বলে (যেমন
     "ধানমন্ডি") সরাসরি স্থানাঙ্ক না দেয়, তাহলে প্রথমে geocode_location টুল
     ব্যবহার করে সেই নাম থেকে lat/lon বের করো, তারপর তা find_hospitals বা
-    find_blood_banks-এ ব্যবহার করো। অবস্থান/বাজেট না জানলে সংক্ষেপে জিজ্ঞাসা
-    করো, কিন্তু গুরুতর অবস্থায় প্রথমে ৯৯৯ কল করার কথা বলতে দেরি করবে না।
+    find_blood_banks-এ ব্যবহার করো। যদি বার্তায় ইতিমধ্যে সরাসরি স্থানাঙ্ক দেওয়া
+    থাকে (যেমন "আমার বর্তমান অবস্থান (স্থানাঙ্ক): 23.74610,90.37420" —
+    ওয়েব অ্যাপের "share my location" বাটন থেকে আসে), তাহলে geocode_location
+    কল করার দরকার নেই — সেই সংখ্যাগুলো সরাসরি find_hospitals/find_blood_banks-এ
+    ব্যবহার করো। অবস্থান/বাজেট না জানলে সংক্ষেপে জিজ্ঞাসা করো, কিন্তু গুরুতর
+    অবস্থায় প্রথমে ৯৯৯ কল করার কথা বলতে দেরি করবে না।
     5. তুমি কখনো তথ্য বানাবে না। জানা না থাকলে সৎভাবে বলো এবং ৯৯৯/১০৯০ নম্বরে
     যোগাযোগ করতে বলো।
     6. ভূমিকম্প বা দুর্যোগের প্রসঙ্গে, "ড্রপ কভার হোল্ড" নিরাপত্তা নীতি এবং ১০৯০
@@ -71,8 +82,12 @@ SYSTEM_PROMPT = """
         and budget. If the user names an area instead of coordinates (e.g.
         "Dhanmondi"), call geocode_location FIRST to get real lat/lon, then use
         that in find_hospitals or find_blood_banks — never guess coordinates
-        yourself. Ask briefly if location/budget is unknown, but never delay
-        telling them to call 999 in a serious situation.
+        yourself. If the message already contains explicit coordinates (e.g.
+        "My current location (coordinates): 23.74610,90.37420" — this comes from
+        the web app's "share my location" button), skip geocode_location and use
+        those numbers directly in find_hospitals/find_blood_banks. Ask briefly if
+        location/budget is unknown, but never delay telling them to call 999 in a
+        serious situation.
         5. Never invent facts. If you don't know something, say so honestly and
         point to 999/1090.
         6. For earthquakes/disasters: give the "Drop, Cover, Hold On" safety
@@ -94,15 +109,24 @@ SYSTEM_PROMPT = """
         """
 
 agent = Agent(
-            model=model,
-            system_prompt=SYSTEM_PROMPT,
-            tools=[find_hospitals, get_emergency_number, first_aid_steps, find_blood_banks, submit_user_feedback, geocode_location],
-        )
+    model=model,
+    system_prompt=SYSTEM_PROMPT,
+    tools=[
+        find_hospitals,
+        get_emergency_number,
+        first_aid_steps,
+        find_blood_banks,
+        submit_user_feedback,
+        geocode_location,
+    ],
+)
 
 
 def main():
     print("জরুরি সহায় (Joruri Shohay) — জরুরি মুহূর্তে আপনার পাশে")
-    print("⚠️  This is a demo/hackathon project — for real emergencies, call 999 directly.")
+    print(
+        "⚠️  This is a demo/hackathon project — for real emergencies, call 999 directly."
+    )
     print("প্রশ্ন লিখুন, বের হতে 'exit' লিখুন।\n")
 
     while True:
